@@ -1,6 +1,7 @@
 (require '[clojure.tools.logging]
          '[clojure.java.io])
 
+;; TODO: better way to silence WARNINGS that are not directly relevant to the script?
 (defn- disable-logging
   "Run this to disable logging from printing to the terminal."
   []
@@ -43,33 +44,41 @@
    ["-i" "--id ID" "Model ID"
     :parse-fn #(Integer/parseInt %)
     :validate [pos-int? "Must be a positive Integer"]]
-   ["-w" "--wait wait" "Wait Time in seconds for page loads for the App Screenshot."
+   ["-x" "--width WIDTH" "Width in pixels of the rendered image(s)."
     :parse-fn #(Integer/parseInt %)
-    :validate [pos-int? "Must be a positive Integer"]]])
+    :validate [pos-int? "Must be a positive Integer"]]
+   ["-y" "--height HEIGHT" "Height in pixels of the rendered images. Only Applies to Card screenshots."
+    :parse-fn #(Integer/parseInt %)
+    :validate [pos-int? "Must be a positive Integer"]]
+   ["-t" "--wait WAIT" "Wait Time in seconds for page loads for the App Screenshot."
+    :parse-fn #(Integer/parseInt %)
+    :validate [pos-int? "Must be a positive Integer"]]
+   ["-f" "--save-dir SAVE-DIR" "Directory where screenshots will be saved."]])
 
+;; TODO: implement check if driver is installed
 (defn check-browser-driver-installed
   []
-  (println "OK")
   true)
 
+;; TODO: does pcalls make sense? Is this worth it?
 (defn- render-images
   [{:keys [model] :as config}]
-  (pcalls [(when (= :card model)
-             (do (-> (static/render config) u/open)
-                 (println "Opening static-viz render.")))
-           (do (-> (app/screenshot config) u/open)
-               (println "Opening app-viz render."))]))
+  (pcalls
+    [(when (= :card model)
+       (do (-> (static/render config) u/open)
+           (println "Opening static-viz render.")))
+     (do (-> (app/screenshot config) u/open)
+         (println "Opening app-viz render."))]))
 
 (defn -main
   [& args]
-  (println "Checking Browser Driver.")
   (when (check-browser-driver-installed)
-    (let [{:keys [options help summary]} (cli/parse-opts args cli-options)
-          {:keys [config]} options]
+    (let [{:keys [options summary]} (cli/parse-opts args cli-options)
+          {:keys [config help]}     options]
+      #_(println (merge config (dissoc options :config)))
       (println "Rendering. The Browser Screenshot may take a couple seconds.")
       (cond
-        help (println summary)
+        help   (println summary)
         config (render-images (merge config (dissoc options :config)))
-        :else (render-images options))
-      (println "Finished.")
+        :else  (render-images options))
       (System/exit 0))))

@@ -39,11 +39,12 @@
   [{:keys [url
            model id
            width
-           filename] :as render-request}]
+           save-dir] :as render-request}]
   (when (or (= model :card)
             (str/includes? (or url "") "question"))
     (let [width         (or width 1000)
-          filename      (or filename (str (name model) "-" id "-static-viz.png"))
+          filename      (str save-dir (when-not (str/ends-with? save-dir "/") "/")
+                             (name model) "-" id "-static-viz.png")
           card          (card-via-api render-request)
           viz           (viz-settings card)
           query-results (-> (query-via-api render-request) (assoc-in [:data :viz-settings] viz))

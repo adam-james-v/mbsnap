@@ -1,6 +1,7 @@
 (ns mbsnap.screenshot
   (:require [etaoin.api :as e]
-            [mbsnap.util :as u]))
+            [mbsnap.util :as u]
+            [clojure.string :as str]))
 
 (defn size
   [width model-or-height]
@@ -68,14 +69,13 @@ hide()
            url
            domain model id params
            width height
-           filename
+           save-dir
            wait]}]
   (let [width    (or width 1000)
         params   (or params {})
         url      (or url (u/build-url domain model id params))
-        filename (or filename (str (name model) "-" id "-app-viz.png"))
+        filename (str save-dir (when-not (str/ends-with? save-dir "/") "/") (name model) "-" id "-app-viz.png")
         wait     (or wait 1)]
-    (println width height)
     (e/with-firefox-headless {:size (if-not height
                                       (size width model)
                                       [width height])} driver
