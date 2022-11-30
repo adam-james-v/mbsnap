@@ -1,0 +1,8 @@
+{:width  900 ;; width of rendered image(s) in pixels. Defaults to 1000px if not specified
+ :height 700 ;; height of card renders in pixels. Dashboard heights are calculated, so this is ignored. Defaults to create a 16/9 aspect ratio image for card renders
+ :domain "http://localhost:3000" ;; the domain, including the Protocol. Required
+ :model  :card ;; the model (:card or :dashboard)
+ :id     4528 ;; the ID number of the card or dashboard
+ :wait   3 ;; Wait time between each browser step (3 steps) for renders. For slower questions/dashboards, higher may be better
+ :cookie "your-cookie-can-go-here" ;; metabase.SESSION cookie value. Required for authentication
+ }

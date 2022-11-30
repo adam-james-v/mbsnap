@@ -1,0 +1,9 @@
+{:deps
+ {etaoin/etaoin     {:mvn/version "1.0.38"} ;; Webdriver library. Requires firefox and the firefox WebDriver (for this V0 of the script, anyway)
+  cheshire/cheshire {:mvn/version "5.10.2"} ;; use this with clj-http to automatically get json->edn
+  clj-http/clj-http {:mvn/version "3.12.3"} ;; interact with the Metabase API through HTTP requests
+  metabase/metabase {:local/root "/Users/adam/Downloads/metabase.jar"} ;; need EITHER a local jar or your local src to metabase to do the static-viz render
+  }
+ :aliases
+ {:run
+  {:main-opts ["-m" "mbsnap.main"]}}}
