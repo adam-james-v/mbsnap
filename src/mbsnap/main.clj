@@ -1,25 +1,10 @@
-(require '[clojure.tools.logging]
-         '[clojure.java.io])
-
-;; TODO: better way to silence WARNINGS that are not directly relevant to the script?
-(defn- disable-logging
-  "Run this to disable logging from printing to the terminal."
-  []
-  (alter-var-root
-   #'clojure.tools.logging/*logger-factory*
-   (fn [_] clojure.tools.logging.impl/disabled-logger-factory)))
-
-(disable-logging)
-
-(binding [*out* (clojure.java.io/writer (clojure.java.io/output-stream "/dev/null"))
-          *err* (clojure.java.io/writer (clojure.java.io/output-stream "/dev/null"))]
-  (ns mbsnap.main
-    (:require [clojure.edn :as edn]
-              [clojure.string :as str]
-              [clojure.tools.cli :as cli]
-              [mbsnap.render-png :as static]
-              [mbsnap.screenshot :as app]
-              [mbsnap.util :as u])))
+(ns mbsnap.main
+  (:require [clojure.edn :as edn]
+            [clojure.string :as str]
+            [clojure.tools.cli :as cli]
+            [mbsnap.render-png :as static]
+            [mbsnap.screenshot :as app]
+            [mbsnap.util :as u]))
 
 (defn try-slurp
   [s]
@@ -75,7 +60,6 @@
   (when (check-browser-driver-installed)
     (let [{:keys [options summary]} (cli/parse-opts args cli-options)
           {:keys [config help]}     options]
-      #_(println (merge config (dissoc options :config)))
       (println "Rendering. The Browser Screenshot may take a couple seconds.")
       (cond
         help   (println summary)

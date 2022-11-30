@@ -17,33 +17,33 @@ Once things are set up, its not too hard to run the main namepsace with `clj -M:
 First, you'll need to set up a few things.
 
 1. Clone this repo
-2. In the repo's root, find `deps.edn`, and edit the `metabase/metabase` coordinate in one of two ways:
-   - change the :local/root path to a metabase.jar file you have locally
-   - change the :local/root path to the root directory of metabase's source repo
-   You'll need to do this since we're using Metabase as a library in this script.
-3. Install Firefox's WebDriver eg. `brew install geckodriver`
-4. Get your Metabase session cookie value
+2. Install Firefox's WebDriver eg. `brew install geckodriver`
+3. Get your Metabase session cookie value
    - log in to the Metabase Instance you want to take screenshots of
    - In your browser's dev tools, go to 'Network', and inspect any of the Requests to Metabase.
-   - Find the 'Cookies' tab, and in the list you should see 'metabase.SESSION'. Copy the value there.
+   - Find the 'Cookies' tab, and in the list you should see 'metabase.SESSION'. Copy the uid **value** there.
    - optionally, in a terminal, `export MB_COOKIE='your copied value'`. Sanity check with `echo $MB_COOKIE`
-5. I recommend setting up a config.edn file that you can pass in.
+4. I recommend setting up a config.edn file that you can pass in.
 
 ```clojure
-{:width  900 ;; width of rendered image(s) in pixels. Defaults to 1000px if not specified
+{:cookie "88888888-4444-4444-4444-121212121212" ;; metabase.SESSION cookie value. Required for authentication
+ :width  900 ;; width of rendered image(s) in pixels. Defaults to 1000px if not specified
  :height 700 ;; height of card renders in pixels. Dashboard heights are calculated, so this is ignored. Defaults to create a 16/9 aspect ratio image for card renders
  :domain "http://localhost:3000" ;; the domain, including the Protocol. Required
  :model  :card ;; the model (:card or :dashboard)
  :id     4528 ;; the ID number of the card or dashboard
  :wait   3 ;; Wait time between each browser step (3 steps) for renders. For slower questions/dashboards, higher may be better
- :cookie "your-cookie-can-go-here" ;; metabase.SESSION cookie value. Required for authentication
  }
 ```
 
 ### Usage
-Once things are set up, you can run the script with:
+Once things are set up, you can run the script from the project's root directory with:
 
-`clj -M:run --config your-config.edn --model :card --id 1`
+`clj -M:run --config your-config.edn` which will run with your config settings.
+
+If you want to override specific values but keep your config otherwise the same:
+
+`clj -M:run --config your-config.edn --model card --id 1` will run with a model value of `:card`, an id of `1`, and all other settings values that you've set up in your config.edn. In this way you can set up your domain and cookie _once_ while quickly being able to put in new models/ids for rendering.
 
 Use `clj -M:run -h` to print a summary of the (currently) available args you can pass.
 
